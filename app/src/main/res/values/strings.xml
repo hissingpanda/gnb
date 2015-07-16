@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">GNB</string>
+
+    <string name="hello_world">Hello world!</string>
+
+    <string name="location_settings_title">Improve location accuracy</string>
+    <string name="location_settings">Settings</string>
+    <string name="location_skip">Skip</string>
+    <string name="location_instructions">To enhance your Maps experience:\n\n• Turn on GPS and mobile network location</string>
+    <string name="never_show_again">Never show this again</string>
+
+    <string name="title_section1">Map</string>
+    <string name="title_section2">Add a Bathroom</string>
+    <string name="title_section3">Feedback</string>
+    <string name="email">planctot9@gmail.com</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_directions">Text</string>
+
+    <string name="action_settings">Settings</string>
+</resources>
