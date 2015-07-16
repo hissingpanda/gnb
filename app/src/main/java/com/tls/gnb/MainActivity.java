@@ -15,6 +15,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -246,7 +247,7 @@ public class MainActivity extends ActionBarActivity
              *
              **************************************************************/
 
-            // Gets bathroom data from RefugeRestrooms.org (50 closest entries -- defined in Server.java)
+            // Gets bathroom data from RefugeRestrooms.org (20 closest entries -- defined in Server.java)
             String curLatLng;
             if (mCurrentLocation != null) {
 
@@ -501,18 +502,21 @@ public class MainActivity extends ActionBarActivity
             getSupportActionBar().setTitle("GNB");
 
             // prev and next buttons
-            Button next;
-            next = (Button) findViewById(R.id.next_button);
-
+            FloatingActionButton next = (FloatingActionButton) findViewById(R.id.fab1);
             // Set onclicklistener for next button
+            next.setOnClickListener(new View.OnClickListener() {// Set onclicklistener for back button
+                @Override
+                public void onClick(View v) {
+                    back_action();
+                }
+            });
             next.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) { next_action();}
             });
-            Button back;
-            back = (Button) findViewById(R.id.back_button);
-            // Set onclicklistener for back button
-            back.setOnClickListener(new View.OnClickListener() {
+
+            FloatingActionButton back = (FloatingActionButton) findViewById(R.id.fab2);
+            back.setOnClickListener(new View.OnClickListener() {// Set onclicklistener for back button
                 @Override
                 public void onClick(View v) {
                     back_action();

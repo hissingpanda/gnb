@@ -74,9 +74,9 @@ public class Server {
             @Override
             public URI buildUrl() throws URISyntaxException {
 
-                //Refuge Restrooms API with latlng of Coffman Memorial Hall (minneapolis) and Unisex bathrooms queried
-                //http://www.refugerestrooms.org/api/docs/#!/restrooms/GET_version_restrooms_search_format
-                return new URI("http://www.refugerestrooms.org:80/api/v1/restrooms/by_location.json?per_page=50&" + searchTerm);
+                // Refuge Restrooms API bathrooms queried
+                // http://www.refugerestrooms.org/api/docs/#!/restrooms/GET_version_restrooms_search_format
+                return new URI("http://www.refugerestrooms.org:80/api/v1/restrooms/by_location.json?per_page=20&" + searchTerm);
             }
 
             @Override
