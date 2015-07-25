@@ -9,13 +9,8 @@ Contribute
 
 TODO
 -------
-xx- when no gps, search bar -- same for when gps location isn't near bathroom (if response == null) -- returns toast
-xx- text directions temp fix -- set random location, showed toast
-xx- disable action buttons without gps -- shows toast (location not enabled, no nearby restrooms)
-xx- removed next, back buttons for navigate icon
 - email, app name, icon 
 - search bar
-
 - when turning location off after it's been on??
 - red markers vs blue markers? accessibility
 - style Feedback Form better
