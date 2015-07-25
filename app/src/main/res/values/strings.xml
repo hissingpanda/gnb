@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">GNB</string>
+    <string name="app_name">Refuge Restrooms</string>
 
     <string name="hello_world">Hello world!</string>
 
@@ -16,6 +16,9 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="location_not_enabled">Location not enabled</string>
+    <string name="no_nearby_locations">No nearby restrooms found</string>
+    <string name="no_nearby_locations_initial">No restrooms found nearby; if you know of any please add them!</string>
 
     <string name="action_directions">Text</string>
 

@@ -45,7 +45,7 @@ import android.util.Log;
 
 /**
  * Placeholder
- * @author jmp
+ * @author Refuge Restrooms
  */
 
 public class Server {

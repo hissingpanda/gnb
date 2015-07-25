@@ -5,38 +5,34 @@ Android app that finds gender neutral, unisex, and family restrooms nearby.
 
 Contribute
 -------
-- Clone repo and then "open existing project" into Android Studio
+- Clone repo and then open as an existing project in Android Studio
 
 TODO
 -------
-- when no gps, find city or state, same for when gps location isn't near bathroom
-- text directions temp fix -- remove (textdirectionactivity)
-- text directions action bar -- back button, settitle
-- navigation drawer icon
-- red markers vs blue markers? accessibility
-- settings icon shows up on nav drawer open
-- style Feedback Form better
+xx- when no gps, search bar -- same for when gps location isn't near bathroom (if response == null) -- returns toast
+xx- text directions temp fix -- set random location, showed toast
+xx- disable action buttons without gps -- shows toast (location not enabled, no nearby restrooms)
+xx- removed next, back buttons for navigate icon
+- email, app name, icon 
+- search bar
 
-- more info in info window, Add bathroom rating to info window
+- when turning location off after it's been on??
+- red markers vs blue markers? accessibility
+- style Feedback Form better
+- detailed info button like in ios app, Add bathroom rating to info window
 - style text directions section -- directions.html
 - better add bathroom section, not as a webview
 - get location from wifi when no mCurrentLocation -- also for webview
-- Add search function
-- actionbar activity depreciated
-- contact form without email client -- http://stackoverflow.com/questions/2020088/sending-email-in-android-using-javamail-api-without-using-the-default-built-in-a/2033124#2033124
+- actionbar activity depreciated (HttpClient as well)
+- contact form without email client
 - nav drawer icons
-- Make maps info window appear at bottom of screen, like google maps -- might have to do this as a dynamic text view
 - Update text directions while on tab?
-- Allow get directions from selecting icon
-- Screen rotation reupdates map to beginning location...
 - signed keystore for play store?
 - enable crash reports
-- general UX design
 
 Bugs
 ------
-- Going to text section and then back, messes up location and next
-- if too far away from bathroom, response is empty from json call (currently then makes a call nearest location)
+- Screen rotation reupdates map to beginning location...
 
 Screenshots
 ----------
@@ -45,5 +41,3 @@ Screenshots
 ![](/app/src/main/res/drawable-hdpi/Screenshots/screen3.png?raw=true)
 ![](/app/src/main/res/drawable-hdpi/Screenshots/screen4.png?raw=true)
 ![](/app/src/main/res/drawable-hdpi/Screenshots/screen5.png?raw=true)
-
-Thanks to refuge restrooms for the bathroom list API

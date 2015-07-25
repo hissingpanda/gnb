@@ -1,16 +1,19 @@
 package com.tls.gnb;
 
 /**
- * Created by hissingpanda on 7/13/2015.
+ * Created by Refuge Restrooms on 7/13/2015.
  */
 import java.io.IOException;
 import java.io.InputStream;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
+import android.view.MenuItem;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.widget.Toast;
 
 
 public class TextDirectionsActivity extends ActionBarActivity {
@@ -20,6 +23,7 @@ public class TextDirectionsActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.text_directions);
         //setWebContentsDebuggingEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         webView = (WebView) findViewById(R.id.webView1);
         //webView.getSettings().setJavaScriptEnabled(true);
         //webView.loadUrl("http://www.google.com");
@@ -73,6 +77,7 @@ public class TextDirectionsActivity extends ActionBarActivity {
         if (extras != null) {
             String start = extras.getString("START_LOC");
             String end = extras.getString("END_LOC");
+            setTitle(extras.getString("TITLE"));
 
             html = html.replace("$START$", start);
             html = html.replace("$END$", end);
@@ -81,10 +86,23 @@ public class TextDirectionsActivity extends ActionBarActivity {
             //temp fix for no location
             html = html.replace("$START$", "Walter Library UMN");
             html = html.replace("$END$", "Coffman Memorial Union");
+            Toast.makeText(this,"Location Not Enabled.. Setting Random Location",
+                    Toast.LENGTH_SHORT).show();
         }
         //Loads the given data into this WebView, using baseUrl as the base URL for the content -- defaults to about:blank
         //The base URL is used both to resolve relative URLs and when applying JavaScript's same origin policy.
         //The historyUrl is used for the history entry -- defaults to about:blank
         webView.loadDataWithBaseURL(null, html, "text/html", "UTF-8", null);
+    }
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                this.finish();
+                //NavUtils.navigateUpFromSameTask(this);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+
     }
 }

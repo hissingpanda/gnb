@@ -9,7 +9,7 @@ import android.text.TextUtils;
 
 /**
  * Placeholder
- * @author jmp
+ * @author Refuge Restrooms
  */
 public class Bathroom {
 

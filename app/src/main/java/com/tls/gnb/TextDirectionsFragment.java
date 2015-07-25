@@ -1,7 +1,7 @@
 package com.tls.gnb;
 
 /**
- * Created by hissingpanda on 7/13/2015.
+ * Created by Refuge Restrooms on 7/13/2015.
  */
 
 import android.os.Bundle;
@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-public class WebViewFragment extends Fragment {
+public class TextDirectionsFragment extends Fragment {
 
     private String currentURL;
 

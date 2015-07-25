@@ -22,6 +22,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -68,14 +69,17 @@ public class MainActivity extends ActionBarActivity
     private StreetViewPanorama mSvp;
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
-    private final String TAG = "GNB";
+    private final String TAG = "Refuge Restrooms";
     private JsonRequest mJsonRequest;
     private Server.ServerListener mListener;
     private ListOfBathrooms response;
     private ListView mDrawerList;
     private ArrayAdapter<String> mAdapter;
+    private Boolean initial = true;
 
     Location mCurrentLocation;
+    Location mLastLocation;
+    Location mCurrentLocationNoGps;
     LocationManager locationManager;
     LatLng currentPosition;
     Marker pos_marker;
@@ -84,7 +88,7 @@ public class MainActivity extends ActionBarActivity
 
     protected LatLng start;
     protected LatLng end;
-    // temp lat/lng for starting point when no gps
+    // temp lat/lng for setting up initial map
     static final LatLng COFFMAN  	       = new LatLng(44.972905,-93.235613);
 
     private int numLocations;
@@ -238,8 +242,18 @@ public class MainActivity extends ActionBarActivity
             if (mCurrentLocation == null) {
                 //Log.d("","provider : "+ provider);
                 // String provider = LocationManager.GPS_PROVIDER;
+                LocationListener locationListener = new LocationListener() {
+                    public void onLocationChanged(Location location) {
+                        // Called when a new location is found by the network location provider.
+                        mCurrentLocationNoGps = location;
+                    }
+                    public void onStatusChanged(String provider, int status, Bundle extras) {}
 
-                mCurrentLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                    public void onProviderEnabled(String provider) {}
+
+                    public void onProviderDisabled(String provider) {}
+                };
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
             }
 
             /*******************************************************************
@@ -264,9 +278,9 @@ public class MainActivity extends ActionBarActivity
             else {
                 //TODO get nearby location when GPS is disabled -- currently crashing, so it's been set to Minnesota
                 // If no location info, sets LatLng to be Coffman Memorial Union (temp fix)
-                curLatLng = "lat=44.9727&lng=-93.2354";
-                mServer = new Server(this);
-                mServer.performSearch(curLatLng);
+                //curLatLng = "lat=44.9727&lng=-93.2354";
+                //mServer = new Server(this);
+                //mServer.performSearch(curLatLng);
             }
 
             /*******************************************************************
@@ -406,6 +420,7 @@ public class MainActivity extends ActionBarActivity
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     private CharSequence mTitle;
+    private String mLocationTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -432,26 +447,25 @@ public class MainActivity extends ActionBarActivity
         };
 
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
-
         boolean gps_enabled = false;
+        boolean network_enabled = false;
         try {
             gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         } catch (Exception ex) {
             Log.e("MainActivity", ex.getMessage());
         }
 
-        if (! gps_enabled) {
+        if (!gps_enabled) {
             Dialog dialog = createDialog();
             dialog.show();
 
             // Tries to get data from network otherwise
             try {
-                gps_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+                network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
             } catch (Exception ex) {
-                //Log.e("MainActivity", ex.getMessage());
+                Log.e("MainActivity", ex.getMessage());
             }
         }
-
         setContentView(R.layout.activity_main);
         setUpMapIfNeeded();
 		/*
@@ -461,14 +475,15 @@ public class MainActivity extends ActionBarActivity
 
         if (servicesConnected()) {
             mMap.getUiSettings().setMyLocationButtonEnabled(true);
-            //Might want to switch this to true, or update location camera
             mMap.setMyLocationEnabled(true);
+            // Disables the get directions from google maps icons (this would open the Maps app)
+            //mMap.getUiSettings().setMapToolbarEnabled(false);
             // Create the LocationRequest object
             mLocationRequest = LocationRequest.create();
             // Location Accuracy
             mLocationRequest.setPriority(
                     LocationRequest.PRIORITY_HIGH_ACCURACY);
-                    // LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+            // LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
             // Set the update interval to 5 seconds
             mLocationRequest.setInterval(UPDATE_INTERVAL);
             // Set the fastest update interval to 1 second
@@ -492,39 +507,13 @@ public class MainActivity extends ActionBarActivity
 
             // Start with updates turned off
             mUpdatesRequested = false;
-	        mContext = getApplicationContext();
+            mContext = getApplicationContext();
 
-            /*
-	         * Webview button segment
-	         * change code here??
-	         */
             final Context context = this;
-            getSupportActionBar().setTitle("GNB");
-
-            // prev and next buttons
-            FloatingActionButton next = (FloatingActionButton) findViewById(R.id.fab1);
-            // Set onclicklistener for next button
-            next.setOnClickListener(new View.OnClickListener() {// Set onclicklistener for back button
-                @Override
-                public void onClick(View v) {
-                    back_action();
-                }
-            });
-            next.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) { next_action();}
-            });
-
-            FloatingActionButton back = (FloatingActionButton) findViewById(R.id.fab2);
-            back.setOnClickListener(new View.OnClickListener() {// Set onclicklistener for back button
-                @Override
-                public void onClick(View v) {
-                    back_action();
-                }
-            });
+            getSupportActionBar().setTitle("Refuge Restrooms");
         }
-    /** Swaps fragments in the main content view */
-    mNavigationDrawerFragment = (NavigationDrawerFragment)
+        /** Swaps fragments in the main content view */
+        mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
 
@@ -532,6 +521,30 @@ public class MainActivity extends ActionBarActivity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+
+        DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+
+            /**
+             * Called when a drawer has settled in a completely closed state.
+             */
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+
+            /**
+             * Called when a drawer has settled in a completely open state.
+             */
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+        };
+
+        // Set the drawer toggle as the DrawerListener
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        mDrawerToggle.syncState();
     }
     /** Swaps fragments in the main content view */
 
@@ -744,7 +757,7 @@ public class MainActivity extends ActionBarActivity
         if (mMap == null) {
             mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
                     .getMap();
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(COFFMAN, 18));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(COFFMAN, 15));
             mMap.getUiSettings().setZoomControlsEnabled(false);
 
             // Custom info window
@@ -799,7 +812,7 @@ public class MainActivity extends ActionBarActivity
     String[] names;
     // Array that keeps track of the locations that have already been cycled through with the next button -- 99 is max query of locations right now
     int currentLoc[];
-    // Array for the back button, could probably combine current and last, but having two separate arrays was simpler for the time
+    // Array for the back button -- No longer used?, could probably combine current and last, but having two separate arrays was simpler for the time
     int lastLoc[];
     int location_count = 0;
 
@@ -817,16 +830,14 @@ public class MainActivity extends ActionBarActivity
             String name = bathroom.getName();
             int score = bathroom.getScore();
             //String comment = bathroom.getComments();
+            // Adds bathroom markers, blue for accessible, red for not
             if (bathroom.isAccessible() == true)
             {
                 mMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(temp.latitude,temp.longitude))
+                        .position(new LatLng(temp.latitude, temp.longitude))
                         .title(bathroom.getName())
                         .snippet(bathroom.getDirections())
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-                //tempMark.showInfoWindow();
-
-
             }
             else
             {
@@ -840,21 +851,43 @@ public class MainActivity extends ActionBarActivity
             locations[i] = temp;
             names[i] = name;
         }
+        // New marker onclicklistener to navigate to selected marker
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            // On marker click
+            public boolean onMarkerClick(Marker marker) {
+                mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()), 400, null);
+                marker.showInfoWindow();
+                //mMap.getUiSettings().setMapToolbarEnabled(true);
+                if (mCurrentLocation != null) {
+                    navigateToMarker(marker);
+                }
+                else {
+                    mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                            mGoogleApiClient);
+                    if (mLastLocation != null) {
+                        navigateToMarker(marker);
+                    }
+                }
+                return true;
+            }
+        });
 
         // Find closest location
         double posLat;
         double posLng;
         double myLat = 0;
         double myLng = 0;
-
-        if (mCurrentLocation != null) {
+        // Checks initial boolean value because otherwise after coming back from text directions
+        // the closest value is reset to it's initial value, not what was selected to navigate to
+        if (mCurrentLocation != null && numLocations > 0 && initial == true) {
             myLat = mCurrentLocation.getLatitude();
             myLng = mCurrentLocation.getLongitude();
 
             // Defined before now
             // int closestLoc = -1;
             distances = new double[numLocations];
-            // For loop to find the nearest bathroom, set to search from nearest array not just minnesota??
+            // For loop to find the nearest bathroom
             for(int i=0; i < numLocations; i++){
                 // Gets i'th array locations latlng
                 posLat = locations[i].latitude;
@@ -871,14 +904,20 @@ public class MainActivity extends ActionBarActivity
             lastLoc[location_count] = closestLoc;
         }
         // Make sure end location doesn't change
-        if (mCurrentLocation != null) {
-            end = locations[closestLoc];
-            getSupportActionBar().setTitle(names[closestLoc]);
+        if (mCurrentLocation != null && initial == true) {
+            if (numLocations > 0) {
+                end = locations[closestLoc];
+                getSupportActionBar().setTitle(names[closestLoc]);
 
-            Routing routing = new Routing(Routing.TravelMode.WALKING);
-            routing.registerListener(this);
-            routing.execute(start, end);
-
+                Routing routing = new Routing(Routing.TravelMode.WALKING);
+                routing.registerListener(this);
+                routing.execute(start, end);
+                initial = false;
+            }
+            else {
+                Toast.makeText(this,R.string.no_nearby_locations_initial,
+                        Toast.LENGTH_LONG).show();
+            }
         }
     }
 
@@ -896,68 +935,29 @@ public class MainActivity extends ActionBarActivity
             }
         });
     }
-
-    // Finds next closest location
-    public void next_action() {
-        // Initialize array to prevent out of bounds exception
-        double posLat;
-        double posLng;
-        double myLat = 0;
-        double myLng = 0;
+    // Navigates to Maps Marker when selected
+    public void navigateToMarker(Marker marker) {
         if (mCurrentLocation != null) {
-            myLat = mCurrentLocation.getLatitude();
-            myLng = mCurrentLocation.getLongitude();
-
-            closestLoc = -1;
-            // For loop to find the nearest bathroom, set to search from nearest array not just minnesota??
-            for(int i=0; i < numLocations; i++){
-                // Gets i'th array locations latlng
-                if (i != currentLoc[i]) {
-                    posLat = locations[i].latitude;
-                    posLng = locations[i].longitude;
-
-                    //haversine formula which computes shortest distance between two points on a sphere
-                    distances[i] = Haversine.formula(myLat, myLng, posLat, posLng);
-
-                    if ( closestLoc == -1 || distances[i] < distances[closestLoc] ) {
-                        closestLoc = i;
-                    }
-                }
-            }
-            // Updates arrays current and last for proper next/back button cycling
-            currentLoc[closestLoc] = closestLoc;
-            location_count += 1;
-            lastLoc[location_count] = closestLoc;
-        }
-        // Make sure end location doesn't change
-        if (mCurrentLocation != null) {
-            end = locations[closestLoc];
-            getSupportActionBar().setTitle(names[closestLoc]);
+            end = marker.getPosition();
+            getSupportActionBar().setTitle(marker.getTitle());
+            mLocationTitle = marker.getTitle();
 
             Routing routing = new Routing(Routing.TravelMode.WALKING);
             routing.registerListener(this);
             routing.execute(start, end);
         }
+        else if (mLastLocation != null) {
+            end = marker.getPosition();
+            getSupportActionBar().setTitle(marker.getTitle());
 
-    }
-    public void back_action() {
-        if (location_count > 0) {
+            double myLat = mLastLocation.getLatitude();
+            double myLng = mLastLocation.getLongitude();
+            start = new LatLng(myLat,myLng);
+            mLocationTitle = marker.getTitle();
 
-            int temp = lastLoc[location_count];
-            // Resets the value for the last press of the next button
-            currentLoc[temp] = -1;
-            // Selects the previous location
-            location_count -= 1;
-            temp = lastLoc[location_count];
-
-            if (mCurrentLocation != null) {
-                end = locations[temp];
-                getSupportActionBar().setTitle(names[temp]);
-
-                Routing routing = new Routing(Routing.TravelMode.WALKING);
-                routing.registerListener(this);
-                routing.execute(start, end);
-            }
+            Routing routing = new Routing(Routing.TravelMode.WALKING);
+            routing.registerListener(this);
+            routing.execute(start, end);
         }
     }
     //TODO Possibly fix navigation drawer to be a smoother switch between the map and fragments -- also redundant onSectionAttached
@@ -1009,7 +1009,7 @@ public class MainActivity extends ActionBarActivity
     public void restoreActionBar() {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        actionBar.setDisplayShowTitleEnabled(true);
+        actionBar.setHomeButtonEnabled(true);
         actionBar.setTitle(mTitle);
     }
 
@@ -1033,7 +1033,6 @@ public class MainActivity extends ActionBarActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
         /*
         if (id == R.id.action_settings) {
@@ -1043,7 +1042,7 @@ public class MainActivity extends ActionBarActivity
         if (item.getItemId() == R.id.action_directions) {
             Intent intent = new Intent(MainActivity.this, TextDirectionsActivity.class);
             //passes in current location to TextDirectionsActivity
-            if (mCurrentLocation != null) {
+            if (mCurrentLocation != null && end != null) {
                 double tmpLat = mCurrentLocation.getLatitude();
                 double tmpLng = mCurrentLocation.getLongitude();
                 // string manipulation here to get in the right format for API call
@@ -1056,10 +1055,19 @@ public class MainActivity extends ActionBarActivity
                 Bundle extras = new Bundle();
                 extras.putString("START_LOC", start);
                 extras.putString("END_LOC", end);
+                extras.putString("TITLE", mLocationTitle);
                 intent.putExtras(extras);
+                startActivity(intent);
+                return true;
             }
-            startActivity(intent);
-            return true;
+            else if (mCurrentLocation == null) {
+                Toast.makeText(this, R.string.location_not_enabled, Toast.LENGTH_SHORT).show();
+                return false;
+            }
+            else if (end == null) {
+                Toast.makeText(this, R.string.no_nearby_locations, Toast.LENGTH_SHORT).show();
+                return false;
+            }
         }
         return super.onOptionsItemSelected(item);
     }

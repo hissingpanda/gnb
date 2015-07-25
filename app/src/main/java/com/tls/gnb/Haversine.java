@@ -1,7 +1,7 @@
 package com.tls.gnb;
 
 /**
- * Created by hissingpanda on 7/13/2015.
+ * Created by Refuge Restrooms on 7/13/2015.
  */
 //Haversine formula to compute shortest distance between two points on a sphere
 public class Haversine {
