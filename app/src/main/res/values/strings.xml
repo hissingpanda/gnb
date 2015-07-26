@@ -12,15 +12,33 @@
     <string name="title_section1">Map</string>
     <string name="title_section2">Add a Bathroom</string>
     <string name="title_section3">Feedback</string>
-    <string name="email">gnb.android.app@gmail.com</string>
+    <string name="email">refugerestroomsapp@gmail.com</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="location_not_enabled">Location not enabled</string>
     <string name="no_nearby_locations">No nearby restrooms found</string>
     <string name="no_nearby_locations_initial">No restrooms found nearby; if you know of any please add them!</string>
-
     <string name="action_directions">Text</string>
-
     <string name="action_settings">Settings</string>
+
+    <string name="search_button">Find a Restroom</string>
+    <string name="add_button">Add a Restroom - coming soon</string>
+    <string name="search_location_button">Restrooms Near You</string>
+    <string name="about_button">About</string>
+    <string name="submit_button">Submit</string>
+    <string name="add_activity_title">Add a Restroom</string>
+    <string name="list_activity_title">Search Results</string>
+    <string name="action_search">Search Address</string>
+    <string name="search_hint">Search Address</string>
+    <string name="success_toast">Restroom successfully submitted</string>
+    <string name="fail_toast">There was an error submitting the restroom</string>
+    <string name="accessible">Accessible</string>
+    <string name="unisex">Unisex</string>
+    <string name="score">Score:  </string>
+    <string name="unknown">unknown</string>
+    <string name="about_activity_title">About RefugeRestrooms</string>
+    <string name="about">The REFUGE app is an android client for refugerestrooms.org, a web app which seeks to provide safe restroom access for transgender, intersex, and gender nonconforming individuals.\n\nREFUGE picks up the torch where Safe2Pee left off, bringing help to those who find themselves in need of a place to pee safely once again. We seek to create a community focused not only on finding existing safe restroom access but also looking forward and participating in restroom advocacy for transgender, intersex, and gender nonconforming folk.</string>
+    <string name="about_link">For more information, see http://www.refugerestrooms.org/about</string>
+    <string name="no_results">No results have been found.</string>
 </resources>

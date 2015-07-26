@@ -1,36 +1,57 @@
-Gender Neutral Bathrooms
-=========================
+# Refuge Restrooms
+Android app for [Refuge Restrooms](http://www.refugerestrooms.org/)
 
-Android app that finds gender neutral, unisex, and family restrooms nearby.
+Merged this project with [Refuge Restrooms App](https://github.com/RefugeRestrooms/refugerestrooms-android)!! So work on the project there: https://github.com/RefugeRestrooms/refugerestrooms-android
 
-Contribute
--------
-- Clone repo and then open as an existing project in Android Studio
+## Getting started
+You can use Android Studio (http://developer.android.com/tools/studio/index.html) to build this project, and it should behave like any other android studio project.
 
-TODO
--------
-- email, app name, icon 
-- search bar
-- when turning location off after it's been on??
-- red markers vs blue markers? accessibility
-- style Feedback Form better
-- detailed info button like in ios app, Add bathroom rating to info window
-- style text directions section -- directions.html
-- better add bathroom section, not as a webview
-- get location from wifi when no mCurrentLocation -- also for webview
-- actionbar activity depreciated (HttpClient as well)
-- contact form without email client
-- nav drawer icons
-- Update text directions while on tab?
-- signed keystore for play store?
-- enable crash reports
+Clone the repo here and the in Android Studio go to File -> New -> Import Project and navigate to your clone.
 
-Bugs
-------
-- Screen rotation reupdates map to beginning location...
+## Contributing
+By all means contribute :) Areas which definitely need work are listed as TODOs below. Feel free to add more.
 
-Screenshots
-----------
+Please try to stick to the android style guidelines http://source.android.com/source/code-style.html. Fields should start with 'm'
+In addition, please put curly brackets round your blocks.
+
+If you push code, please make sure it builds correctly. Feel free to use pull requests so that other contributors can check your code.
+
+## Functionality
+- Works best with GPS Location enabled
+- Uses [Google Maps Gestures](https://support.google.com/gmm/answer/3139292?hl=en)
+- Selecting location marker shows bathroom info and changes navigation to that location
+- Navigation icon in the top right gives text directions
+- Blue marker = accessible, red marker = not accessible
+- "Alt" Folder/Source files are from original android app
+- When GPS isn't enabled
+  - Popup box will recommend turning it on initial app start
+  - Navigation icon gives a toast to enable location
+  - Selecting marker doesn't give location
+  - Currently location defaults to Minneapolis (Fix this!)
+- If no bathroom within 30(ish?) miles, no results are given by refuge restrooms api, so a toast displays to the user that no bathrooms are nearby
+
+## TODO
+- [ ] Signed keystore for play store
+- [ ] Search bar
+- [ ] Get and set nearby location when gps is disabled (currently defaults to Minneapolis)
+- [ ] Detailed info button like in ios app, Add bathroom rating to info window
+- [ ] Indicate red markers vs blue markers for accessibility
+- [ ] Navigate button floating action button instead?
+- [ ] Style
+  - [ ] Style Feedback Form better
+  - [ ] Navigation drawer icons
+  - [ ] Style text directions section -- directions.html
+- [ ] Better add bathroom section, currently just a webview
+- [ ] Contact form without email client
+- [ ] Update text directions while on tab
+- [ ] Actionbar activity depreciated (HttpClient as well)
+- [ ] Enable crash reports
+
+## Bugs
+- [ ] Screen rotation re-updates map to initial closest location
+- [ ] Turning location off after it's been on doesn't grab last known location on app reopen
+
+## Screenshots
 ![](/app/src/main/res/drawable-hdpi/Screenshots/screen1.png?raw=true)
 ![](/app/src/main/res/drawable-hdpi/Screenshots/screen2.png?raw=true)
 ![](/app/src/main/res/drawable-hdpi/Screenshots/screen3.png?raw=true)
